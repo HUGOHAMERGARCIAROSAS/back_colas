@@ -16,7 +16,8 @@ Person.init(
         persona_ID: {
             type: DataTypes.STRING(11),
             primaryKey: true,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         paterno: {
             type: DataTypes.STRING,
@@ -39,11 +40,11 @@ Person.init(
             allowNull: false
         },
         registro_fecha: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false
         },
         estado: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.INTEGER,
             allowNull: false
         }
     },

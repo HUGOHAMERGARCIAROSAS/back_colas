@@ -11,6 +11,7 @@ const sequelize = new Sequelize(envs.DB_DATABASE, envs.DB_USER, envs.DB_PASS, {
   }
 });
 
+
 export { sequelize, QueryTypes };
 
 

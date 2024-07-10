@@ -12,7 +12,6 @@ export class PersonController {
         const { persona_ID, paterno, materno, nombres, documento, registro_user, registro_fecha, estado } = req.body;
         
         const [error, registerDto] = RegisterPersonDto.create({persona_ID, paterno, materno, nombres, documento, registro_user, registro_fecha, estado});
-        console.log(registro_fecha);
         if(error) return res.status(400).json({error});
         
         this.personService.registerPerson(registerDto!).then((registerDto) => res.json(registerDto)).catch(error => res.status(400).json({error}));
