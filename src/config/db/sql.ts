@@ -1,28 +1,16 @@
-import sql from 'mssql';
+import { Sequelize, Dialect, QueryTypes } from 'sequelize';
 import { envs } from '../envs';
 
-const config: sql.config = {
-    user: envs.DB_USER,
-    password: envs.DB_PASS,
-    server: envs.DB_SERVER,
-    database: envs.DB_DATABASE,
-    port: envs.DB_PORT,
+const sequelize = new Sequelize(envs.DB_DATABASE, envs.DB_USER, envs.DB_PASS, {
+  host: envs.DB_SERVER,
+  dialect: envs.DIALECT as Dialect,
+  dialectOptions: {
     options: {
-        encrypt: false
+      encrypt: true
     }
-}
+  }
+});
+
+export { sequelize, QueryTypes };
 
 
-const poolPromise = new sql.ConnectionPool(config)
-    .connect()
-    .then(pool => {
-        console.log('conectado');
-        return pool;
-    })
-    .catch(err => {
-        console.log('no conectado');
-        console.log(err);
-        throw err;
-    });
-
-export { sql, poolPromise };

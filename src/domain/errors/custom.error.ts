@@ -27,6 +27,7 @@ export class CustomError extends Error {
     }
 
     static internalServerError(message: string) {
+        console.log(message);
         return new CustomError(500, message);
     }
 

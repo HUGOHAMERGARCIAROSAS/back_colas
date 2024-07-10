@@ -1,19 +1,31 @@
-import { poolPromise  } from "../../config/db/sql";
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../../config/db/sql";
 
-interface User {
-    per_codigo: number;
-    per_login: string;
-    per_password: string;
+class User extends Model {
+    per_codigo!: number;
+    per_login!: string;
+    password!: string;
 }
 
-const getUsers = async (): Promise<User[]> => {
-    const pool = await poolPromise;
-    const result = await pool
-        .request()
-        .query("SELECT * FROM USUARIO");
-    return result.recordset;
-};
+User.init(
+    {
+        per_codigo: {
+            type: DataTypes.STRING(11),
+            primaryKey: true
+        },
+        per_login: {
+            type: DataTypes.STRING
+        },
+        password: {
+            type: DataTypes.STRING
+        }
+    },
+    {
+        modelName: 'User',
+        tableName: 'usuario',
+        timestamps: false,
+        sequelize
+    }
+);
 
-
-
-export { getUsers }
+export { User as UserModel };
