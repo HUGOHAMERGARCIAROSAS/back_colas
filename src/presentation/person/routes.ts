@@ -11,6 +11,7 @@ export class PersonRoutes {
         const controller = new PersonController(personService);
 
         // definir rutas
+        router.get('/', controller.getPersons);
         router.post('/register', controller.registerPerson);
 
         return router;

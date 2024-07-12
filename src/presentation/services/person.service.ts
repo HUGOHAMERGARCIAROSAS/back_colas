@@ -1,22 +1,45 @@
-import { RegisterPersonDto } from '../../domain/dtos/person/register-user.dto';
-import {  PersonModel } from "../../data/sql/persona.model";
-import { CustomError } from '../../domain';
-import {  literal } from 'sequelize';
+import { RegisterPersonDto, CustomError, PersonEntity } from '../../domain';
+import {  PersonModel, UserModel } from "../../data";
 
 
 export class PersonService {
     
-    constructor() { }
+    constructor() {
+     }
 
     public async  registerPerson( RegisterPersonDto : RegisterPersonDto ) {
-        const existPerson = await PersonModel.findOne({ where: { documento: RegisterPersonDto.documento } } );
+
+        
+        const existPerson = await PersonModel.findOne({ where: { document: RegisterPersonDto.document } } );
 
         if(existPerson) throw CustomError.badRequest('Ya existe una persona con este documento');
+        console.log(existPerson);
         try{
             const person = await PersonModel.create({ ...RegisterPersonDto  });
-            return person;
+            const personEntity = PersonEntity.fromObject(person);
+            return personEntity;
+
         }catch(err){
-            console.log(err)
+            throw CustomError.internalServerError(`${err}`);
+        }
+    }
+
+    public async  getPersons() {
+        try{
+            const persons = await PersonModel.findAll({
+                order: [['person_id', 'DESC']],
+                where: { status: 1 },
+                include: [
+                    { 
+                        model: UserModel,
+                        required: false,
+                        where: { status: 1 },
+                        attributes: ['person_id', 'username', 'email'] 
+                    }
+                ]
+            });
+            return persons;
+        }catch(err){
             throw CustomError.internalServerError(`${err}`);
         }
     }

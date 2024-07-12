@@ -1,29 +1,28 @@
 import { Response, Request } from "express";
-import { sequelize, QueryTypes } from '../../config/db/sql';
-
+import { RegisterUserDto, CustomError } from "../../domain";
+import { UserService } from "../services";
 export class AuthController {
 
-    constructor() {
+    constructor(public readonly userService: UserService) {
+    }
+
+    private handleError = (error: unknown, res: Response) => {
+        if (error instanceof CustomError) {
+            return res.status(error.statusCode).json({ error: error.message });
+        }
+        console.error(error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 
     registerUser = (req: Request, res: Response) => {
-        res.json('registerUser');
+        const { person_id, username, password, email, status, created_user, created_date, updated_user, updated_date } = req.body;
+        const [error, registerDto] = RegisterUserDto.create({ person_id, username, password, email, status, created_user, created_date, updated_user, updated_date });
+        if (error) return res.status(400).json({ error });
+
+        this.userService.registerUser(registerDto!).then((registerDto) => res.json(registerDto)).catch(error => this.handleError(error, res));
     }
 
     loginUser = async (req: Request, res: Response) => {
-        let tipo: number = 1;
-        let login: string = 'hgarciar';
-        const users = await sequelize.query('exec sp_usuario @tipo=:tipo, @login=:login', {
-            replacements: {
-                tipo, login
-            },
-            type: QueryTypes.SELECT
-        });
-
-        res.json({
-            users,
-            message: 'loginUser'
-        });
     }
 
     validateEmail = (req: Request, res: Response) => {
